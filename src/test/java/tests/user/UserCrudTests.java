@@ -119,12 +119,12 @@ public class UserCrudTests {
         assertEquals(404, getResponse.statusCode());
     }
 
-    @AfterEach
+    /*@AfterEach
     public void tearDown() {
         for (Long userId : userIds) {
             if (userId != null) {
                 userClient.deleteUser(userId);
             }
         }
-    }
+    }*/
 }
