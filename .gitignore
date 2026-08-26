@@ -37,6 +37,7 @@ build/
 
 # Allure
 .allure/
+allure-results/
 
 # Node
 node_modules/
