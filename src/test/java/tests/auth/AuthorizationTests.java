@@ -1,12 +1,11 @@
-package tests;
+package tests.auth;
 
-import base.BaseTest;
 import config.Config;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 
-public class AuthApiTests1 {
+public class AuthorizationTests {
 
     @Test
     public void shouldReturn401WithInvalidToken(){

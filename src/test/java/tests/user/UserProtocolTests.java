@@ -1,21 +1,20 @@
-package tests;
+package tests.user;
 
-import base.BaseTest;
 import client.UserClient;
-import io.restassured.response.Response;
+import config.Config;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.notNullValue;
 
-public class UserApiTests6 extends BaseTest {
-    private UserClient userClient;
+public class UserProtocolTests {
     private Long userId;
 
     @Test
     public void shouldGetUsersWithJsonAcceptHeader() {
-        given(requestSpec)
+        given(Config.getUserRequestSpec())
                 .accept("application/json")
                 .when()
                 .get("/users")
@@ -26,7 +25,7 @@ public class UserApiTests6 extends BaseTest {
 
     @Test
     public void shouldCreateUserWithJsonContentType() {
-        userId = given(requestSpec)
+        userId = given(Config.getUserRequestSpec())
                 .contentType("application/json")
                 .body("""
                         {
@@ -48,7 +47,7 @@ public class UserApiTests6 extends BaseTest {
 
     @Test
     public void shouldReturnErrorWithUnsupportedContentType() {
-        given(requestSpec)
+        given(Config.getUserRequestSpec())
                 .contentType("text/plain")
                 .body("""
                         {

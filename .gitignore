@@ -34,3 +34,9 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Allure
+.allure/
+
+# Node
+node_modules/

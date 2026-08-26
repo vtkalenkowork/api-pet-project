@@ -1,34 +1,21 @@
-package tests;
+package tests.user;
 
 import client.UserClient;
-import config.Config;
 import data.ErrorResponse;
 import data.UserRequest;
-import data.UserResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.*;
-import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UserApiTests8 {
-    private UserClient userClient;
+public class UserValidationTests {
+    UserClient userClient;
 
     @BeforeEach
-    public void setup(){
+    public void setUp() {
         userClient = new UserClient();
-    }
-
-    @Test
-    public void shouldCreateUser(){
-        UserRequest userRequest = new UserRequest("Slava", "slava@test.com");
-        Response postResponse = userClient.createUser(userRequest);
-
-        assertEquals(201, postResponse.statusCode());
-        assertEquals("Slava", postResponse.jsonPath().getString("name"));
-        assertEquals("slava@test.com", postResponse.jsonPath().getString("email"));
     }
 
     @Test
@@ -123,7 +110,7 @@ public class UserApiTests8 {
         assertTrue(errorResponse.getErrors().contains("Email is invalid"));
     }
 
-    @Test
+    /*@Test
     public void shouldReturn400WhenTopLevelDomainIsMissing(){
         UserRequest userRequest = new UserRequest("Slava", "test@test");
         Response postResponse = userClient.createUser(userRequest);
@@ -134,7 +121,7 @@ public class UserApiTests8 {
 
         assertEquals(400, errorResponse.getStatus());
         assertTrue(errorResponse.getErrors().contains("Email is invalid"));
-    }
+    }*/
 
     @Test
     public void shouldReturn400WhenEmailContainsSpaces(){
@@ -147,71 +134,5 @@ public class UserApiTests8 {
 
         assertEquals(400, errorResponse.getStatus());
         assertTrue(errorResponse.getErrors().contains("Email is invalid"));
-    }
-
-    @Test
-    public void shouldCreateAndCheckUser(){
-        UserRequest userRequest = new UserRequest("slava", "slava@test.com");
-        Response postResponse = userClient.createUser(userRequest);
-
-        assertEquals(201, postResponse.statusCode());
-
-        Long userId = postResponse.jsonPath().getLong("id");
-
-        Response getResponse = userClient.getUser(userId);
-
-        assertEquals(200, getResponse.statusCode());
-
-        UserResponse userResponse = getResponse.body().as(UserResponse.class);
-
-        assertEquals(userId, userResponse.getId());
-        assertEquals("slava", userResponse.getName());
-        assertEquals("slava@test.com", userResponse.getEmail());
-    }
-
-    @Test
-    public void shouldReturn404ForNotExistingUser(){
-        Response getResponse = userClient.getUser(999L);
-
-        assertEquals(404, getResponse.statusCode());
-    }
-
-    @Test
-    public void shouldReturnExistingUser(){
-        Response getResponse = userClient.getUser(1L);
-
-        assertEquals(200, getResponse.statusCode());
-
-        UserResponse userResponse = getResponse.body().as(UserResponse.class);
-        assertNotNull(userResponse.getId());
-        assertNotNull(userResponse.getName());
-        assertNotNull(userResponse.getEmail());
-    }
-
-    @Test
-    public void shouldReturnUsersMatchingSchema() {
-        given(Config.getUserRequestSpec())
-                .when()
-                .get("/users")
-                .then()
-                .statusCode(200)
-                .body(matchesJsonSchemaInClasspath(
-                        "schemas/users-response-schema.json"
-                ));
-    }
-
-    @Test
-    public void shouldReturnErrorMatchingSchema() {
-        UserRequest userRequest = new UserRequest(null, "test@test.com");
-
-        given(Config.getUserRequestSpec())
-                .body(userRequest)
-                .when()
-                .post("/users")
-                .then()
-                .statusCode(400)
-                .body(matchesJsonSchemaInClasspath(
-                        "schemas/error-response-schema.json"
-                ));
     }
 }

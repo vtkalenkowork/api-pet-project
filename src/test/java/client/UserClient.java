@@ -27,6 +27,15 @@ public class UserClient {
                 .response();
     }
 
+    public Response getAllUsers(){
+        return given(Config.getUserRequestSpec())
+                .when()
+                .get("/users")
+                .then()
+                .extract()
+                .response();
+    }
+
     public Response updateUser(UserRequest user, Long userId){
         return given(Config.getUserRequestSpec())
                 .body(user)
@@ -41,6 +50,16 @@ public class UserClient {
         return given(Config.getUserRequestSpec())
                 .when()
                 .delete("/users/" + userId)
+                .then()
+                .extract()
+                .response();
+    }
+
+    public Response getUsersByName(String name){
+        return given(Config.getUserRequestSpec())
+                .queryParam("name", name)
+                .when()
+                .get("/users")
                 .then()
                 .extract()
                 .response();

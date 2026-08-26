@@ -2,7 +2,6 @@ package client;
 
 import config.Config;
 import data.LoginRequest;
-import data.UserRequest;
 import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;

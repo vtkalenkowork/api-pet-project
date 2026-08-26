@@ -1,4 +1,4 @@
-package tests;
+package tests.auth;
 
 import client.AuthClient;
 import data.ErrorResponse;
@@ -10,28 +10,31 @@ import org.junit.jupiter.api.Test;
 import utils.JwtUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class AuthApiTests {
+public class LoginTests {
     AuthClient authClient;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         authClient = new AuthClient();
     }
 
     @Test
-    public void shouldLoginWithValidCredentials(){
+    public void shouldLoginWithValidCredentials() {
         LoginRequest loginRequest = new LoginRequest("slava", "password");
 
         Response response = authClient.login(loginRequest);
 
+        String token = response.jsonPath().getString("token");
+
         assertEquals(200, response.statusCode());
-        assertNotNull(response.jsonPath().getString("token"));
-        assertEquals("test-token", response.jsonPath().getString("token"));
+        assertNotNull(token);
     }
 
     @Test
-    public void shouldReturn401WithInvalidCredentials(){
+    public void shouldReturn401WithInvalidCredentials() {
         LoginRequest loginRequest = new LoginRequest("slava", "wrong-password");
 
         Response response = authClient.login(loginRequest);
@@ -43,7 +46,7 @@ public class AuthApiTests {
     }
 
     @Test
-    public void shouldReturn400WhenPasswordIsEmpty(){
+    public void shouldReturn400WhenPasswordIsEmpty() {
         LoginRequest loginRequest = new LoginRequest("slava", "");
 
         Response response = authClient.login(loginRequest);
@@ -56,7 +59,7 @@ public class AuthApiTests {
     }
 
     @Test
-    public void shouldReturn400WhenUsernameIsEmpty(){
+    public void shouldReturn400WhenUsernameIsEmpty() {
         LoginRequest loginRequest = new LoginRequest("", "password");
 
         Response response = authClient.login(loginRequest);
@@ -69,7 +72,7 @@ public class AuthApiTests {
     }
 
     @Test
-    public void shouldReturnValidJwtAfterLogin(){
+    public void shouldReturnValidJwtAfterLogin() {
         LoginRequest loginRequest = new LoginRequest("slava", "password");
 
         Response response = authClient.login(loginRequest);
