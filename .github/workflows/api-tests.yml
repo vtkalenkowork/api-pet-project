@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout test project
         uses: actions/checkout@v4
 
       - name: Set up JDK 25
@@ -21,5 +21,35 @@ jobs:
           java-version: '25'
           cache: maven
 
-      - name: Run tests
+      - name: Checkout user-api
+        uses: actions/checkout@v4
+        with:
+          repository: vtkalenkowork/user-api-service
+          path: user-api
+
+      - name: Checkout auth-service
+        uses: actions/checkout@v4
+        with:
+          repository: vtkalenkowork/auth-service
+          path: auth-service
+
+      - name: Build user-api
+        run: mvn -f user-api/pom.xml clean package -DskipTests
+
+      - name: Build auth-service
+        run: mvn -f auth-service/pom.xml clean package -DskipTests
+
+      - name: Build Docker images
+        run: |
+          docker build -t user-api:latest ./user-api
+          docker build -t auth-service:latest ./auth-service
+
+      - name: Start backend services
+        run: docker compose up -d
+
+      - name: Run API tests
         run: mvn clean test
+
+      - name: Stop backend services
+        if: always()
+        run: docker compose down
