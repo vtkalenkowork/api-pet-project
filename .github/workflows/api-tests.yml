@@ -1,5 +1,8 @@
 name: API Tests
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [ main ]
@@ -54,6 +57,13 @@ jobs:
       - name: Generate Allure report
         if: always()
         run: mvn allure:report
+
+      - name: Deploy report
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target/site/allure-maven-plugin
 
       - name: Upload Allure report
         if: always()
