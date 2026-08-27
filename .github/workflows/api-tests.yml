@@ -58,6 +58,10 @@ jobs:
         if: always()
         run: mvn allure:report
 
+      - name: Prepare Allure report
+        if: always()
+        run: cp target/site/allure-maven-plugin/allure-maven.html target/site/allure-maven-plugin/index.html
+
       - name: Deploy report
         if: always()
         uses: peaceiris/actions-gh-pages@v3
